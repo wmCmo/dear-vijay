@@ -1,5 +1,5 @@
 import { ArrowCircleDownIcon } from "@phosphor-icons/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 
 function MailTitle({ img, alt, name }) {
@@ -27,10 +27,28 @@ function VijayMail() {
 export default function App() {
 
   const bgmRef = useRef(null);
-  const play = () => bgmRef.current?.play();
+  const play = async () => {
+    if (!bgmRef.current) {
+      return;
+    }
+    try {
+      await bgmRef.current.play();
+    } catch {
+    }
+  };
 
   useEffect(() => {
-    bgmRef.current?.play();
+    play();
+
+    window.addEventListener("pointerdown", play, { once: true });
+    window.addEventListener("keydown", play, { once: true });
+    window.addEventListener("touchstart", play, { once: true });
+
+    return () => {
+      window.removeEventListener("pointerdown", play);
+      window.removeEventListener("keydown", play);
+      window.removeEventListener("touchstart", play);
+    };
   }, []);
 
   return (
@@ -38,7 +56,7 @@ export default function App() {
       <audio src="bgm.mp3" loop ref={bgmRef} />
       <section className="h-dvh flex flex-col justify-center relative items-center">
         <div className="mx-auto text-center max-w-xs space-y-4">
-          <p className="text-neutral-400">Turn on the audio!🔊</p>
+          <p className="text-neutral-400 underline underline-offset-2">Turn on the audio!🔊</p>
           <div className="space-y-2">
             <h1 className="text-4xl font-bold">Dear Vijay</h1>
             <p>Thanks for being the coolest, nicest, chillest man.😎</p>
@@ -154,4 +172,4 @@ export default function App() {
       </section>
     </div>
   );
-}
+};
