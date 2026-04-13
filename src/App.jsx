@@ -27,12 +27,17 @@ function VijayMail() {
 export default function App() {
 
   const bgmRef = useRef(null);
-  const play = async () => {
-    if (!bgmRef.current) {
+
+  const play = () => {
+    const audio = bgmRef.current;
+    if (!audio) {
       return;
     }
+
     try {
-      await bgmRef.current.play();
+      const playPromise = audio.play();
+      if (playPromise && typeof playPromise.then === "function") {
+      }
     } catch {
     }
   };
@@ -40,23 +45,30 @@ export default function App() {
   useEffect(() => {
     play();
 
-    window.addEventListener("pointerdown", play, { once: true });
+    window.addEventListener("click", play, { once: true });
     window.addEventListener("keydown", play, { once: true });
-    window.addEventListener("touchstart", play, { once: true });
+    window.addEventListener("touchend", play, { once: true });
 
     return () => {
-      window.removeEventListener("pointerdown", play);
+      window.removeEventListener("click", play);
       window.removeEventListener("keydown", play);
-      window.removeEventListener("touchstart", play);
+      window.removeEventListener("touchend", play);
     };
   }, []);
 
   return (
     <div className="max-w-xl mx-auto">
-      <audio src="bgm.mp3" loop ref={bgmRef} />
+      <audio src="bgm.mp3" loop preload="auto" playsInline ref={bgmRef} />
       <section className="h-dvh flex flex-col justify-center relative items-center">
         <div className="mx-auto text-center max-w-xs space-y-4">
-          <p className="text-neutral-400 underline underline-offset-2">Turn on the audio!🔊</p>
+          <button
+            onClick={play}
+            onTouchEnd={play}
+            type="button"
+            className="text-neutral-400 underline underline-offset-2"
+          >
+            Turn on the audio!🔊
+          </button>
           <div className="space-y-2">
             <h1 className="text-4xl font-bold">Dear Vijay</h1>
             <p>Thanks for being the coolest, nicest, chillest man.😎</p>
